@@ -42,6 +42,11 @@ end program fielded_to_linear.
 *>*****************************************************************
 identification division.
 program-id. gregorian_to_linear.
+environment division.
+configuration section.
+repository.
+    function isleapyear
+    function all intrinsic.
 data division.
 working-storage section.
 *>*****************************************************************
@@ -51,13 +56,6 @@ working-storage section.
 01  fdm-y   pic s9(8) comp-5.
 01  fdm-div pic s9(8) comp-5.
 01  fdm-mod pic s9(8) comp-5.
-
-*>*****************************************************************
-*> isleapyear                                                     *
-*>*****************************************************************
-01  ily-leap    pic x.
-    88  ily-is-leap-year    value 'Y'.
-    88  ily-not-leap-year   value 'N'.
 
 01  gtl-year-less-1  pic s9(5) comp-5.
 01  gtl-temp-days    pic 9999  comp-5.
@@ -96,8 +94,7 @@ procedure division using gtl-year gtl-month gtl-day-of-month
     add gtl-day-of-month to gtl-linear.
 
     if gtl-month > 2
-        call 'isleapyear' using gtl-year ily-leap
-        if ily-is-leap-year
+        if isleapyear(gtl-year) = 'Y'
             subtract 1 from gtl-linear
         else
             subtract 2 from gtl-linear

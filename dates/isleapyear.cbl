@@ -13,7 +13,7 @@
 *>                                                                *
 *>*****************************************************************
 identification division.
-program-id. isleapyear.
+function-id. isleapyear.
 data division.
 working-storage section.
 *>*****************************************************************
@@ -30,7 +30,7 @@ linkage section.
     88  ily-is-leap-year    value 'Y'.
     88  ily-not-leap-year   value 'N'.
 
-procedure division using ily-year ily-leap.
+procedure division using ily-year returning ily-leap.
 0100-main.
     move ily-year to fdm-x.
     move 4 to fdm-y.
@@ -41,9 +41,10 @@ procedure division using ily-year ily-leap.
         move 400 to fdm-y
         call 'floor-divmod' using fdm-x fdm-y fdm-div fdm-mod
         if (fdm-mod = 100) or (fdm-mod = 200) or (fdm-mod = 300)
-            move 'N' to ily-leap else
+            move 'N' to ily-leap
+        else
             move 'Y' to ily-leap
         end-if
     end-if.
     goback.
-end program isleapyear.
+end function isleapyear.

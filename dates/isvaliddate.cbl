@@ -12,6 +12,11 @@
 *>*****************************************************************
 identification division.
 program-id. isvaliddate.
+environment division.
+configuration section.
+repository.
+    function isleapyear
+    function all intrinsic.
 data division.
 working-storage section.
 01  ivd-days-in-month-values.
@@ -47,9 +52,7 @@ procedure division using ivd-year ivd-month ivd-day-of-month
        and (1 <= ivd-day-of-month)
        and (ivd-day-of-month <= ivd-days-in-month(ivd-month))
 
-        if (ivd-month = 2) and (ivd-day-of-month = 29)
-            call 'isleapyear' using ivd-year ivd-valid
-        else
+        if (ivd-month not equal 2) or (ivd-day-of-month not equal 29) or (isleapyear(ivd-year) = 'Y')
             move 'Y' to ivd-valid
         end-if
     end-if.

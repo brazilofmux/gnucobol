@@ -46,6 +46,11 @@ end program linear_to_fielded.
 *>*****************************************************************
 identification division.
 program-id. linear_to_gregorian.
+environment division.
+configuration section.
+repository.
+    function isleapyear
+    function all intrinsic.
 data division.
 working-storage section.
 *>*****************************************************************
@@ -53,13 +58,6 @@ working-storage section.
 *>*****************************************************************
 01  fdm-div pic s9(8) comp-5.
 01  fdm-mod pic s9(8) comp-5.
-
-*>*****************************************************************
-*> isleapyear                                                     *
-*>*****************************************************************
-01  ily-leap    pic x.
-    88  ily-is-leap-year    value 'Y'.
-    88  ily-not-leap-year   value 'N'.
 
 01  ltg-d0            pic s9(8) comp-5.
 01  ltg-d1            pic s9(8) comp-5.
@@ -141,8 +139,7 @@ procedure division using ltg-linear ltg-year ltg-month
     if (ltg-linear  < ltg-mar01)
         move 0 to ltg-correction
     else
-        call 'isleapyear' using ltg-year ily-leap
-        if ily-is-leap-year
+        if isleapyear(ltg-year) = 'Y'
             move 1 to ltg-correction
         else
             move 2 to ltg-correction
