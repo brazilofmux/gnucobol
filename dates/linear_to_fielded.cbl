@@ -25,8 +25,7 @@ linkage section.
 procedure division using linear year month dom doy dow.
 0100-main.
     add 584389 to linear giving linear1.
-    call 'linear_to_gregorian' using linear1 year month dom doy
-                                     dow.
+    call 'linear_to_gregorian' using linear1 year month dom doy dow.
     goback.
 end program linear_to_fielded.
 
@@ -46,28 +45,34 @@ end program linear_to_fielded.
 *>*****************************************************************
 identification division.
 program-id. linear_to_gregorian.
+
 environment division.
 configuration section.
 repository.
     function isleapyear
+    function floor-divmod
     function all intrinsic.
+
 data division.
 working-storage section.
-*>*****************************************************************
-*> floor-divmod, floor-div                                        *
-*>*****************************************************************
-01  fdm-div pic s9(8) comp-5.
-01  fdm-mod pic s9(8) comp-5.
+01  ltg-d0                pic s9(8) comp-5.
 
-01  ltg-d0            pic s9(8) comp-5.
-01  ltg-d1            pic s9(8) comp-5.
-01  ltg-d2            pic s9(8) comp-5.
-01  ltg-d3            pic s9(8) comp-5.
-01  ltg-d4            pic s9(8) comp-5.
-01  ltg-n1            pic s9(8) comp-5.
-01  ltg-n4            pic s9(8) comp-5.
-01  ltg-n100          pic s9(8) comp-5.
-01  ltg-n400          pic s9(8) comp-5.
+01  divmod-400.
+    05  ltg-n400          pic s9(8) comp-5.
+    05  ltg-d1            pic s9(8) comp-5.
+
+01  divmod-100.
+    05  ltg-n100          pic s9(8) comp-5.
+    05  ltg-d2            pic s9(8) comp-5.
+
+01  divmod-4.
+    05  ltg-n4            pic s9(8) comp-5.
+    05  ltg-d3            pic s9(8) comp-5.
+
+01  divmod-1.
+    05  ltg-n1            pic s9(8) comp-5.
+    05  ltg-d4            pic s9(8) comp-5.
+
 01  ltg-jan01         pic s9(8) comp-5.
 01  ltg-mar01         pic s9(8) comp-5.
 01  ltg-correction    pic 9     comp-5.
@@ -84,6 +89,10 @@ working-storage section.
 01  c365         pic s9(8) comp-5 value 365.
 01  c7           pic s9(8) comp-5 value 7.
 
+01  divmod.
+    05  fdm-div pic s9(8) comp-5.
+    05  fdm-mod pic s9(8) comp-5.
+
 linkage section.
 01  ltg-linear        pic s9(8) comp-5.
 01  ltg-year          pic s9(5) comp-5.
@@ -97,10 +106,10 @@ procedure division using ltg-linear ltg-year ltg-month
                          ltg-day-of-week.
 0100-main.
     subtract 1 from ltg-linear giving ltg-d0.
-    call 'floor-divmod' using ltg-d0 c146097 ltg-n400 ltg-d1.
-    call 'floor-divmod' using ltg-d1 c36524 ltg-n100 ltg-d2.
-    call 'floor-divmod' using ltg-d2 c1461 ltg-n4 ltg-d3.
-    call 'floor-divmod' using ltg-d3 c365 ltg-n1 ltg-d4.
+    move floor-divmod(ltg-d0, c146097) to divmod-400.
+    move floor-divmod(ltg-d1, c36524) to divmod-100.
+    move floor-divmod(ltg-d2, c1461) to divmod-4.
+    move floor-divmod(ltg-d3, c365) to divmod-1.
 
     compute ltg-year = 400 * ltg-n400 + 100 * ltg-n100
                      + 4 * ltg-n4 + ltg-n1.
@@ -157,7 +166,7 @@ procedure division using ltg-linear ltg-year ltg-month
 
     compute ltg-day-of-month = ltg-linear - ltg-1st + 1.
 
-    call 'floor-divmod' using ltg-linear c7 fdm-div fdm-mod.
+    move floor-divmod(ltg-linear, c7) to divmod.
     move fdm-mod to ltg-day-of-week.
     goback.
 end program linear_to_gregorian.

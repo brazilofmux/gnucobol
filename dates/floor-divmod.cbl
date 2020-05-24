@@ -17,7 +17,7 @@
 *> -1/2 ==> 0 + -1/2                                              *
 *>*****************************************************************
 identification division.
-program-id. floor-divmod.
+function-id. floor-divmod.
 data division.
 working-storage section.
 01  fdm-tmp pic s9(8) comp-5.
@@ -25,9 +25,10 @@ working-storage section.
 linkage section.
 01  fdm-x   pic s9(8) comp-5.
 01  fdm-y   pic s9(8) comp-5.
-01  fdm-div pic s9(8) comp-5.
-01  fdm-mod pic s9(8) comp-5.
-procedure division using fdm-x fdm-y fdm-div fdm-mod.
+01  result.
+    05  fdm-div pic s9(8) comp-5.
+    05  fdm-mod pic s9(8) comp-5.
+procedure division using fdm-x fdm-y returning result.
 0100-main.
     if fdm-x >= 0
         divide fdm-y into fdm-x giving fdm-div remainder fdm-mod
@@ -40,4 +41,4 @@ procedure division using fdm-x fdm-y fdm-div fdm-mod.
         subtract 1 from fdm-mod
     end-if.
     goback.
-end program floor-divmod.
+end function floor-divmod.

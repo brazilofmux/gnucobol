@@ -107,6 +107,12 @@ end program yearend.
 identification division.
 program-id. dayofweek.
 
+environment division.
+configuration section.
+repository.
+    function floor-divmod
+    function all intrinsic.
+
 data division.
 working-storage section.
 01  isvalid               usage   signed-int.
@@ -114,8 +120,9 @@ working-storage section.
 
 01  ld2                    signed-int.
 01  c7           pic s9(8) comp-5 value 7.
-01  n            pic s9(8) comp-5.
-01  d            pic s9(8) comp-5.
+01  divmod.
+    05  d            pic s9(8) comp-5.
+    05  m            pic s9(8) comp-5.
 
 linkage section.
 *>  Input
@@ -139,8 +146,8 @@ linkage section.
 procedure division using ld dayofweek bool.
 0100-main.
     add 1 to ld giving ld2.
-    call 'floor-divmod' using ld2 c7 n d.
-    move d to dayofweek.
+    move floor-divmod(ld2, c7) to divmod.
+    move m to dayofweek.
     move 'Y' to bool
     goback.
 end program dayofweek.
@@ -157,6 +164,12 @@ end program dayofweek.
 identification division.
 program-id. kdayonorbefore.
 
+environment division.
+configuration section.
+repository.
+    function floor-divmod
+    function all intrinsic.
+
 data division.
 working-storage section.
 01  isvalid               usage   signed-int.
@@ -164,8 +177,9 @@ working-storage section.
 
 01  ld2-max                signed-int.
 01  c7           pic s9(8) comp-5 value 7.
-01  n            pic s9(8) comp-5.
-01  d            pic s9(8) comp-5.
+01  divmod.
+    05  d            pic s9(8) comp-5.
+    05  m            pic s9(8) comp-5.
 
 linkage section.
 *>  Input
@@ -195,8 +209,8 @@ procedure division using k ld-max ld bool.
 *>  ld = ld-max - mod(ld-max - k + 1, 7);
 *>
     compute ld2-max = ld-max - k + 1.
-    call 'floor-divmod' using ld2-max c7 n d.
-    subtract d from ld-max giving ld.
+    move floor-divmod(ld2-max, c7) to divmod.
+    subtract m from ld-max giving ld.
     move 'Y' to bool.
     goback.
 end program kdayonorbefore.
