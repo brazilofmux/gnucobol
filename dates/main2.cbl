@@ -7,7 +7,18 @@
 *>*****************************************************************
 identification division.
 program-id. main2.
+
 environment division.
+configuration section.
+repository.
+    function c_dayofweek
+    function c_fieldedtolinear
+    function c_isvaliddate
+    function c_lineartofielded
+    function c_newyear
+    function c_yearend
+    function all intrinsic.
+
 input-output section.
 file-control.
 
@@ -19,8 +30,7 @@ data division.
 
 file section.
 fd  output-file
-    block contains 50 records
-    label records are omitted.
+    block contains 50 records.
 
 01  output-record.
     05  or-year     pic +99999.
@@ -50,16 +60,31 @@ working-storage section.
     05  filler      pic x       value ' '.
     05  wr-linear   pic +9(8).
 
-01  fieldeddate.
-    05 year         sync usage   signed-short.
-    05 month        sync usage unsigned-short.
-    05 dow          sync usage unsigned-short.
-    05 dom          sync usage unsigned-short.
-    05 doy          sync usage unsigned-short.
+01  ltf-result.
+    05  fieldeddate.
+        10 year         sync usage   signed-short.
+        10 month        sync usage unsigned-short.
+        10 dow          sync usage unsigned-short.
+        10 dom          sync usage unsigned-short.
+        10 doy          sync usage unsigned-short.
 
-01  bool            pic x.
-    88  is-valid    value 'Y'.
-    88  not-valid   value 'N'.
+    05  ltf-success     pic x.
+
+01  ftl-result.
+    05  ftl-ld          signed-int.
+    05  ftl-success     pic x.
+
+01  dow-result.
+    05  dow2            unsigned-short.
+    05  dow-success     pic x.
+
+01  ye-result.
+    05  ld-yearend      signed-int.
+    05  ye-success      pic x.
+
+01  ny-result.
+    05  ld-newyear      signed-int.
+    05  ny-success      pic x.
 
 01  ld              usage   signed-int.
 01  cld             usage   signed-int.
@@ -67,10 +92,6 @@ working-storage section.
 01  cld_today       usage   signed-int.
 01  ld_lower        usage   signed-int.
 01  ld_upper        usage   signed-int.
-
-01  ld-newyear      usage   signed-int.
-01  ld-yearend      usage   signed-int.
-01  dow2            usage   unsigned-short.
 
 01  time-stamp.
     05  ts-date.
@@ -105,17 +126,17 @@ procedure division.
     move ts-year  to year.
     move ts-month to month.
     move ts-dom   to dom.
-    call 'c_isvaliddate' using year month dom bool.
-    if not-valid
+    if c_isvaliddate(year, month, dom) = 0
         display time-stamp
         display year ' ' month ' ' dom ' *not valid*'
         go to 9000-end
     end-if.
-    call 'c_fieldedtolinear' using fieldeddate ld_today bool.
-    if not-valid
+    move c_fieldedtolinear(fieldeddate) to ftl-result.
+    if ftl-success = 'N'
         display year ' ' month ' ' dom ' ' '*not valid*'
         go to 9000-end
     end-if.
+    move ftl-ld to ld_today.
 
     move function integer-of-date(ts-date-3) to cld_today.
 
@@ -141,8 +162,8 @@ procedure division.
 
     perform varying ld from ld_lower by 1 until ld > ld_upper
 
-        call 'c_lineartofielded' using ld fieldeddate bool
-        if not-valid
+        move c_lineartofielded(ld) to ltf-result
+        if ltf-success = 'N'
             display ld ' *not valid*'
             go to 9000-end
         end-if
@@ -179,8 +200,8 @@ procedure division.
             end-if
         end-if
 
-        call 'c_dayofweek' using ld dow2 bool
-        if not-valid
+        move c_dayofweek(ld) to dow-result
+        if dow-success = 'N'
             display 'Day of week: ', ld, dow2, ' *not valid*'
             go to 9000-end
         end-if
@@ -190,8 +211,8 @@ procedure division.
         end-if
 
         if month = 1 and dom = 1
-            call 'c_newyear' using year ld-newyear bool
-            if not-valid
+            move c_newyear(year) to ny-result
+            if ny-success = 'N'
                 display year ' *not valid*'
                 go to 9000-end
             end-if
@@ -202,8 +223,8 @@ procedure division.
         end-if
 
         if month = 12 and dom = 31
-            call 'c_yearend' using year ld-yearend bool
-            if not-valid
+            move c_yearend(year) to ye-result
+            if ye-success = 'N'
                 display year ' *not valid*'
                 go to 9000-end
             end-if

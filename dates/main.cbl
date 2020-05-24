@@ -25,8 +25,7 @@ data division.
 
 file section.
 fd  output-file
-    block contains 50 records
-    label records are omitted.
+    block contains 50 records.
 
 01  output-record.
     05  or-year     pic +99999.
