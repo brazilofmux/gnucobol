@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2000 Solid Vertical Domains, Ltd. and Stephen Dennis
+ * Copyright (C) 2020 Stephen Dennis
+ * Available under MIT License.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

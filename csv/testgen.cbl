@@ -1,3 +1,7 @@
+*>*****************************************************************
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
+*>*****************************************************************
 identification division.
 program-id. testgen.
 

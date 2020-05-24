@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> linear_to_fielded                                              *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> LINEAR_TO_GREGORIAN uses an Epoch of 1 R.D. We make an         *
 *> adjustment now so that we may accept linear dates with an      *

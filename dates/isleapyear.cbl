@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> isleapyear                                                     *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> The following code determines whether a year is a leap year or *
 *> not. It works for negative years.                              *

@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> fielded_to_linear                                              *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> This function returns a linear count of days with an Epoch of  *
 *> 1601-JAN-01 by calling gregorian_to_linear which returns a     *

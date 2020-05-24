@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> main - Driver for date routines.                               *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>*****************************************************************
 identification division.
 program-id. main.

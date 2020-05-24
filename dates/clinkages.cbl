@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> c_isvaliddate                                                  *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>*****************************************************************
 identification division.
 program-id. c_isvaliddate.
@@ -38,7 +40,9 @@ end program c_isvaliddate.
 *>*****************************************************************
 *> c_fieldedtolinear                                              *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> This function returns a linear count of days with an epoch of  *
 *> 1601-JAN-01                                                    *
@@ -95,7 +99,9 @@ end program c_fieldedtolinear.
 *>*****************************************************************
 *> c_lineartofielded                                              *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> This function takes a linear count of days with an epoch of    *
 *> 1601-JAN-01                                                    *
@@ -146,8 +152,10 @@ end program c_lineartofielded.
 
 *>*****************************************************************
 *> c_newyear                                                      *
-*> Copyright (C) 2020 Stephen Vincent Dennis                      *
-*> All rights reserved.                                           *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> Returns the linear date for the first day of the given year.   *
 *>                                                                *
@@ -192,8 +200,10 @@ end program c_newyear.
 
 *>*****************************************************************
 *> c_yearend                                                      *
-*> Copyright (C) 2020 Stephen Vincent Dennis                      *
-*> All rights reserved.                                           *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> Returns the linear date for the first day of the given year.   *
 *>                                                                *
@@ -238,8 +248,10 @@ end program c_yearend.
 
 *>*****************************************************************
 *> c_dayofweek                                                    *
-*> Copyright (C) 2020 Stephen Vincent Dennis                      *
-*> All rights reserved.                                           *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> Returns the day of week for the given fixed date.              *
 *>                                                                *
@@ -284,8 +296,10 @@ end program c_dayofweek.
 
 *>*****************************************************************
 *> c_kdayonorbefore                                               *
-*> Copyright (C) 2020 Stephen Vincent Dennis                      *
-*> All rights reserved.                                           *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> Returns a requested day of the week where the week ends on a   *
 *> certain date.                                                  *

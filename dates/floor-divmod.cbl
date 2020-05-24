@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> floor-divmod                                                   *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> The following "Floor Division Modulus" routine calculates the  *
 *> proper modulus of a negative number. For negative numbers, a   *

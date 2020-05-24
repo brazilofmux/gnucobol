@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2020 Stephen Dennis
+ * Available under MIT License.
+ */
+
 CSV_OBJ = \
               csvgen.o testgen.o \
               csvparser.o testparser.o

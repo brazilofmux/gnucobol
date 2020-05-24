@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> newyear                                                        *
-*> Copyright (C) 2020 Stephen Vincent Dennis                      *
-*> All rights reserved.                                           *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> Returns the linear date for the first day of the given year.   *
 *>                                                                *

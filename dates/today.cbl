@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> today - What is today's date?                                  *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
 *> Copyright (C) 2020 Stephen Dennis                              *
-*> All rights reserved.                                           *
+*> Available under MIT License.                                   *
 *>*****************************************************************
 identification division.
 program-id. today.

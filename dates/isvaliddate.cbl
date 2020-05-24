@@ -1,7 +1,9 @@
 *>*****************************************************************
 *> isvaliddate                                                    *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*> All rights reserved.                                           *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
 *>                                                                *
 *> The following code determines whether a given date is a valid  *
 *> one or not. This test guarantees that the given date will be   *
