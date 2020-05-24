@@ -11,7 +11,7 @@
 *> actually calculating it.                                       *
 *>*****************************************************************
 identification division.
-program-id. isvaliddate.
+function-id. isvaliddate.
 environment division.
 configuration section.
 repository.
@@ -43,8 +43,7 @@ linkage section.
     88  ivd-is-valid-date       value 'Y'.
     88  ivd-is-not-valid-date   value 'N'.
 
-procedure division using ivd-year ivd-month ivd-day-of-month
-                         ivd-valid.
+procedure division using ivd-year ivd-month ivd-day-of-month returning ivd-valid.
 0100-main.
     move 'N' to ivd-valid.
     if (   -27256 <= ivd-year) and (ivd-year <= 30826)
@@ -57,4 +56,4 @@ procedure division using ivd-year ivd-month ivd-day-of-month
         end-if
     end-if.
     goback.
-end program isvaliddate.
+end function isvaliddate.

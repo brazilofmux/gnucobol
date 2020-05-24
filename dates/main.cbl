@@ -7,7 +7,13 @@
 *>*****************************************************************
 identification division.
 program-id. main.
+
 environment division.
+configuration section.
+repository.
+    function isvaliddate
+    function all intrinsic.
+
 input-output section.
 file-control.
 
@@ -113,8 +119,7 @@ procedure division.
     move ts-year  to year.
     move ts-month to month.
     move ts-dom   to dom.
-    call 'isvaliddate' using year month dom bool.
-    if not-valid
+    if isvaliddate(year, month, dom) = 'N'
         display time-stamp
         display year ' ' month ' ' dom ' *not valid*'
         go to 9000-end

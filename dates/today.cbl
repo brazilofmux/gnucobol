@@ -7,7 +7,13 @@
 *>*****************************************************************
 identification division.
 program-id. today.
+
 environment division.
+configuration section.
+repository.
+    function isvaliddate
+    function all intrinsic.
+
 data division.
 
 working-storage section.
@@ -70,10 +76,6 @@ working-storage section.
     05  doy         pic 999     comp-5.
     05  dow         pic 9       comp-5.
 
-01  bool            pic x.
-    88  is-valid    value 'Y'.
-    88  not-valid   value 'N'.
-
 *>
 *> this size of this item is 4 bytes.
 *>
@@ -129,8 +131,7 @@ procedure division.
     move ts-year  to year.
     move ts-month to month.
     move ts-dom   to dom.
-    call 'isvaliddate' using year month dom bool.
-    if not-valid
+    if isvaliddate(year, month, dom) = 'N'
         display time-stamp
         display year ' ' month ' ' dom ' *not valid*'
         go to 9000-end
