@@ -9,7 +9,7 @@
 *>                                                                *
 *>*****************************************************************
 identification division.
-program-id. newyear.
+function-id. newyear.
 
 environment division.
 configuration section.
@@ -32,27 +32,26 @@ linkage section.
 *>
 01  ny-year              pic s9(5)   comp-5.
 
-*>  Output
+*>  Outputs
 *>
-*>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
-*>
-01  ny-lineardate        pic s9(8)   comp-5.
+01  results.
+    *>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
+    *>
+    05  ny-lineardate        pic s9(8)   comp-5.
 
-*>  Success/Failure
-*>
-01  ny-bool              pic x.
-    88  is-valid       value 'Y'.
-    88  is-not-valid   value 'N'.
+    *>  Success/Failure
+    *>
+    05  ny-success           pic x.
 
-procedure division using ny-year ny-lineardate ny-bool.
+procedure division using ny-year returning results.
 0100-main.
-    move 'N' to ny-bool.
+    move 'N' to ny-success.
     if (-27256 <= ny-year) and (ny-year <= 30826)
         move fielded_to_linear(ny-year, month, dom) to ny-lineardate
-        move 'Y' to ny-bool
+        move 'Y' to ny-success
     end-if.
     goback.
-end program newyear.
+end function newyear.
 
 *>*****************************************************************
 *> yearend                                                        *
