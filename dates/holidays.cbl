@@ -109,7 +109,7 @@ end function yearend.
 *>                                                                *
 *>*****************************************************************
 identification division.
-program-id. dayofweek.
+function-id. dayofweek.
 
 environment division.
 configuration section.
@@ -130,28 +130,27 @@ linkage section.
 *>
 *>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
 *>
-01  ld                  usage   signed-int.
+01  ld                 usage   signed-int.
 
-*>  Output
+*>  Outputs
 *>
-*>  The valid range is 0 (Sunday) to 6 (Saturday), inclusively.
-*>
-01  dayofweek           usage   unsigned-short.
+01  results.
+    *>  The valid range is 0 (Sunday) to 6 (Saturday), inclusively.
+    *>
+    05  dow            unsigned-short.
 
-*>  Success/Failure
-*>
-01  bool              pic x.
-    88  is_valid       value 'Y'.
-    88  is_not_valid   value 'N'.
+    *>  Success/Failure
+    *>
+    05  dow-success    pic x.
 
-procedure division using ld dayofweek bool.
+procedure division using ld returning results.
 0100-main.
     add 1 to ld giving ld2.
     move floor-divmod(ld2, c7) to divmod.
-    move m to dayofweek.
-    move 'Y' to bool
+    move m to dow.
+    move 'Y' to dow-success
     goback.
-end program dayofweek.
+end function dayofweek.
 
 *>*****************************************************************
 *> kdayonorbefore                                                 *
@@ -163,7 +162,7 @@ end program dayofweek.
 *>                                                                *
 *>*****************************************************************
 identification division.
-program-id. kdayonorbefore.
+function-id. kdayonorbefore.
 
 environment division.
 configuration section.
@@ -190,19 +189,18 @@ linkage section.
 *>
 01  ld-max              usage   signed-int.
 
-*>  Output
+*>  Outputs
 *>
-*>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
-*>
-01  ld                  usage   signed-int.
+01  result.
+    *>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
+    *>
+    05  ld                  usage   signed-int.
 
-*>  Success/Failure
-*>
-01  bool              pic x.
-    88  is_valid       value 'Y'.
-    88  is_not_valid   value 'N'.
+    *>  Success/Failure
+    *>
+    05  bool              pic x.
 
-procedure division using k ld-max ld bool.
+procedure division using k ld-max returning result.
 0100-main.
 *>  ld = ld-max - mod(ld-max - k + 1, 7);
 *>
@@ -211,4 +209,4 @@ procedure division using k ld-max ld bool.
     subtract m from ld-max giving ld.
     move 'Y' to bool.
     goback.
-end program kdayonorbefore.
+end function kdayonorbefore.

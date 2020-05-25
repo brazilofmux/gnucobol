@@ -11,6 +11,7 @@ program-id. main.
 environment division.
 configuration section.
 repository.
+    function dayofweek
     function fielded_to_linear
     function isvaliddate
     function linear_to_fielded
@@ -85,8 +86,6 @@ working-storage section.
 01  ld_lower        usage   signed-int.
 01  ld_upper        usage   signed-int.
 
-01  dow2            usage   unsigned-short.
-
 01  ny-result.
     05  ld-newyear  signed-int.
     05  ny-success  pic x.
@@ -94,6 +93,10 @@ working-storage section.
 01  ye-result.
     05  ld-yearend  signed-int.
     05  ye-success  pic x.
+
+01  dow-result.
+    05  dow2         unsigned-short.
+    05  dow-success  pic x.
 
 01  time-stamp.
     05  ts-date.
@@ -186,8 +189,8 @@ procedure division.
 
         end-if
 
-        call 'dayofweek' using ld dow2 bool
-        if not-valid
+        move dayofweek(ld) to dow-result
+        if dow-success = 'N'
             display 'Day of week: ', ld, dow2, ' *not valid*'
             go to 9000-end
         end-if
