@@ -15,6 +15,7 @@ repository.
     function isvaliddate
     function linear_to_fielded
     function newyear
+    function yearend
     function all intrinsic.
 
 input-output section.
@@ -84,12 +85,15 @@ working-storage section.
 01  ld_lower        usage   signed-int.
 01  ld_upper        usage   signed-int.
 
-01  ld-yearend      usage   signed-int.
 01  dow2            usage   unsigned-short.
 
 01  ny-result.
     05  ld-newyear  signed-int.
     05  ny-success  pic x.
+
+01  ye-result.
+    05  ld-yearend  signed-int.
+    05  ye-success  pic x.
 
 01  time-stamp.
     05  ts-date.
@@ -205,8 +209,8 @@ procedure division.
         end-if
 
         if month = 12 and dom = 31
-            call 'yearend' using year ld-yearend bool
-            if not-valid
+            move yearend(year) to ye-result
+            if ye-success = 'N'
                 display year ' *not valid*'
                 go to 9000-end
             end-if

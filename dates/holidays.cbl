@@ -19,9 +19,6 @@ repository.
 
 data division.
 working-storage section.
-01  isvalid               usage   signed-int.
-    88  notvalid value 0.
-
 01  month           pic 99      comp-5 value 1.
 01  dom             pic 99      comp-5 value 1.
 
@@ -62,7 +59,7 @@ end function newyear.
 *>                                                                *
 *>*****************************************************************
 identification division.
-program-id. yearend.
+function-id. yearend.
 
 environment division.
 configuration section.
@@ -72,9 +69,6 @@ repository.
 
 data division.
 working-storage section.
-01  isvalid               usage   signed-int.
-    88  notvalid value 0.
-
 01  month           pic 99      comp-5 value 12.
 01  dom             pic 99      comp-5 value 31.
 
@@ -85,27 +79,26 @@ linkage section.
 *>
 01  ye-year              pic s9(5)   comp-5.
 
-*>  Output
+*>  Outputs
 *>
-*>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
-*>
-01  ye-lineardate        pic s9(8)   comp-5.
+01  results.
+    *>  The valid range is -10539804 (Jan 1, -27256) to 10674576 (Dec 31, 30826), inclusively.
+    *>
+    05  ye-lineardate        pic s9(8)   comp-5.
 
-*>  Success/Failure
-*>
-01  ye-bool              pic x.
-    88  is_valid       value 'Y'.
-    88  is_not_valid   value 'N'.
+    *>  Success/Failure
+    *>
+    05  ye-success           pic x.
 
-procedure division using ye-year ye-lineardate ye-bool.
+procedure division using ye-year returning results.
 0100-main.
-    move 'N' to ye-bool.
+    move 'N' to ye-success
     if (-27256 <= ye-year) and (ye-year <= 30826)
         move fielded_to_linear(ye-year, month, dom) to ye-lineardate
-        move 'Y' to ye-bool
+        move 'Y' to ye-success
     end-if.
     goback.
-end program yearend.
+end function yearend.
 
 *>*****************************************************************
 *> dayofweek                                                      *
@@ -126,9 +119,6 @@ repository.
 
 data division.
 working-storage section.
-01  isvalid               usage   signed-int.
-    88  notvalid value 0.
-
 01  ld2                    signed-int.
 01  c7           pic s9(8) comp-5 value 7.
 01  divmod.
@@ -183,9 +173,6 @@ repository.
 
 data division.
 working-storage section.
-01  isvalid               usage   signed-int.
-    88  notvalid value 0.
-
 01  ld2-max                signed-int.
 01  c7           pic s9(8) comp-5 value 7.
 01  divmod.
