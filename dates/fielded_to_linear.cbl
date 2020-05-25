@@ -1,32 +1,4 @@
 *>*****************************************************************
-*> fielded_to_linear                                              *
-*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*>                    and Stephen Dennis                          *
-*> Copyright (C) 2020 Stephen Dennis                              *
-*> Available under MIT License.                                   *
-*>                                                                *
-*> This function returns a linear count of days with an Epoch of  *
-*> 1601-JAN-01 by calling gregorian_to_linear which returns a     *
-*> linear date with an Epoch of 1 R.D.                            *
-*>                                                                *
-*> The date is assumed valid (see isvaliddate).                   *
-*>*****************************************************************
-identification division.
-program-id. fielded_to_linear.
-data division.
-linkage section.
-01  year         pic s9(5) comp-5.
-01  month        pic 99    comp-5.
-01  dom          pic 99    comp-5.
-01  linear       pic s9(8) comp-5.
-procedure division using year month dom linear.
-0100-main.
-    call 'gregorian_to_linear' using year month dom linear.
-    subtract 584389 from linear.
-    goback.
-end program fielded_to_linear.
-
-*>*****************************************************************
 *> gregorian_to_linear                                            *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
 *> All rights reserved.                                           *
@@ -41,7 +13,7 @@ end program fielded_to_linear.
 *> The date is assumed valid (see isvaliddate).                   *
 *>*****************************************************************
 identification division.
-program-id. gregorian_to_linear.
+function-id. gregorian_to_linear.
 environment division.
 configuration section.
 repository.
@@ -68,8 +40,7 @@ linkage section.
 01  gtl-day-of-month pic 99    comp-5.
 01  gtl-linear       pic s9(8) comp-5.
 
-procedure division using gtl-year gtl-month gtl-day-of-month
-                         gtl-linear.
+procedure division using gtl-year gtl-month gtl-day-of-month returning gtl-linear.
 0100-main.
     subtract 1 from gtl-year giving gtl-year-less-1.
     multiply gtl-year-less-1 by 365 giving gtl-linear.
@@ -91,4 +62,37 @@ procedure division using gtl-year gtl-month gtl-day-of-month
         end-if
     end-if.
     goback.
-end program gregorian_to_linear.
+end function gregorian_to_linear.
+
+*>*****************************************************************
+*> fielded_to_linear                                              *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
+*>                                                                *
+*> This function returns a linear count of days with an Epoch of  *
+*> 1601-JAN-01 by calling gregorian_to_linear which returns a     *
+*> linear date with an Epoch of 1 R.D.                            *
+*>                                                                *
+*> The date is assumed valid (see isvaliddate).                   *
+*>*****************************************************************
+identification division.
+function-id. fielded_to_linear.
+environment division.
+configuration section.
+repository.
+    function gregorian_to_linear
+    function all intrinsic.
+
+data division.
+linkage section.
+01  year         pic s9(5) comp-5.
+01  month        pic 99    comp-5.
+01  dom          pic 99    comp-5.
+01  linear       pic s9(8) comp-5.
+procedure division using year month dom returning linear.
+0100-main.
+    subtract 584389 from gregorian_to_linear(year, month, dom) giving linear.
+    goback.
+end function fielded_to_linear.

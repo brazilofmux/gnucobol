@@ -1,35 +1,4 @@
 *>*****************************************************************
-*> linear_to_fielded                                              *
-*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
-*>                    and Stephen Dennis                          *
-*> Copyright (C) 2020 Stephen Dennis                              *
-*> Available under MIT License.                                   *
-*>                                                                *
-*> LINEAR_TO_GREGORIAN uses an Epoch of 1 R.D. We make an         *
-*> adjustment now so that we may accept linear dates with an      *
-*> Epoch of 1601-JAN-01.                                          *
-*>*****************************************************************
-identification division.
-program-id. linear_to_fielded.
-data division.
-working-storage section.
-01  linear1          pic s9(8) comp-5.
-
-linkage section.
-01  linear           pic s9(8) comp-5.
-01  year             pic s9(5) comp-5.
-01  month            pic 99    comp-5.
-01  dom              pic 99    comp-5.
-01  doy              pic 999   comp-5.
-01  dow              pic 9     comp-5.
-procedure division using linear year month dom doy dow.
-0100-main.
-    add 584389 to linear giving linear1.
-    call 'linear_to_gregorian' using linear1 year month dom doy dow.
-    goback.
-end program linear_to_fielded.
-
-*>*****************************************************************
 *> linear_to_gregorian                                            *
 *> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
 *> All rights reserved.                                           *
@@ -44,13 +13,14 @@ end program linear_to_fielded.
 *>                                                                *
 *>*****************************************************************
 identification division.
-program-id. linear_to_gregorian.
+function-id. linear_to_gregorian.
 
 environment division.
 configuration section.
 repository.
     function isleapyear
     function floor-divmod
+    function gregorian_to_linear
     function all intrinsic.
 
 data division.
@@ -95,15 +65,14 @@ working-storage section.
 
 linkage section.
 01  ltg-linear        pic s9(8) comp-5.
-01  ltg-year          pic s9(5) comp-5.
-01  ltg-month         pic 99    comp-5.
-01  ltg-day-of-month  pic 99    comp-5.
-01  ltg-day-of-year   pic 999   comp-5.
-01  ltg-day-of-week   pic 9     comp-5.
+01  ltg-fielded.
+    05  ltg-year          pic s9(5) comp-5.
+    05  ltg-month         pic 99    comp-5.
+    05  ltg-day-of-month  pic 99    comp-5.
+    05  ltg-day-of-year   pic 999   comp-5.
+    05  ltg-day-of-week   pic 9     comp-5.
 
-procedure division using ltg-linear ltg-year ltg-month
-                         ltg-day-of-month ltg-day-of-year
-                         ltg-day-of-week.
+procedure division using ltg-linear returning ltg-fielded.
 0100-main.
     subtract 1 from ltg-linear giving ltg-d0.
     move floor-divmod(ltg-d0, c146097) to divmod-400.
@@ -129,14 +98,12 @@ procedure division using ltg-linear ltg-year ltg-month
 *>        january 1, ltg-year
 
         move 1 to ltg-month
-        call 'gregorian_to_linear' using ltg-year ltg-month
-             ltg-day-of-month ltg-jan01
+        move gregorian_to_linear(ltg-year, ltg-month, ltg-day-of-month) to ltg-jan01
 
 *>        march 1, ltg-year
 
         move 3 to ltg-month
-        call 'gregorian_to_linear' using ltg-year ltg-month
-             ltg-day-of-month ltg-mar01
+        move gregorian_to_linear(ltg-year, ltg-month, ltg-day-of-month) to ltg-mar01
 
 *>        update cache
 
@@ -161,12 +128,46 @@ procedure division using ltg-linear ltg-year ltg-month
         (12 * (ltg-prior-days + ltg-correction) + 373) / 367.
     move ltg-temp to ltg-month.
 
-    call 'gregorian_to_linear' using ltg-year ltg-month
-         ltg-day-of-month ltg-1st.
+    move gregorian_to_linear(ltg-year, ltg-month, ltg-day-of-month) to ltg-1st.
 
     compute ltg-day-of-month = ltg-linear - ltg-1st + 1.
 
     move floor-divmod(ltg-linear, c7) to divmod.
     move fdm-mod to ltg-day-of-week.
     goback.
-end program linear_to_gregorian.
+end function linear_to_gregorian.
+
+*>*****************************************************************
+*> linear_to_fielded                                              *
+*> Copyright (C) 2000 Solid Vertical Domains, Ltd.                *
+*>                    and Stephen Dennis                          *
+*> Copyright (C) 2020 Stephen Dennis                              *
+*> Available under MIT License.                                   *
+*>                                                                *
+*> LINEAR_TO_GREGORIAN uses an Epoch of 1 R.D. We make an         *
+*> adjustment now so that we may accept linear dates with an      *
+*> Epoch of 1601-JAN-01.                                          *
+*>*****************************************************************
+identification division.
+function-id. linear_to_fielded.
+
+environment division.
+configuration section.
+repository.
+     function linear_to_gregorian
+     function all intrinsic.
+
+data division.
+linkage section.
+01  linear           pic s9(8) comp-5.
+01  fielded.
+    05  year             pic s9(5) comp-5.
+    05  month            pic 99    comp-5.
+    05  dom              pic 99    comp-5.
+    05  doy              pic 999   comp-5.
+    05  dow              pic 9     comp-5.
+procedure division using linear returning fielded.
+0100-main.
+    move linear_to_gregorian(584389 + linear) to fielded.
+    goback.
+end function linear_to_fielded.

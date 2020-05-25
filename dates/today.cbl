@@ -11,7 +11,9 @@ program-id. today.
 environment division.
 configuration section.
 repository.
+    function fielded_to_linear
     function isvaliddate
+    function linear_to_fielded
     function all intrinsic.
 
 data division.
@@ -136,11 +138,8 @@ procedure division.
         display year ' ' month ' ' dom ' *not valid*'
         go to 9000-end
     end-if.
-    call 'fielded_to_linear' using year month
-         dom linear-date.
-
-    call 'linear_to_fielded' using linear-date
-        year month dom doy dow.
+    move fielded_to_linear(year, month, dom) to linear-date.
+    move linear_to_fielded(linear-date) to fielded-date.
 
     move year to ol1-year.
     move month to ol1-month.

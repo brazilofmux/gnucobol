@@ -11,6 +11,12 @@
 identification division.
 program-id. newyear.
 
+environment division.
+configuration section.
+repository.
+    function fielded_to_linear
+    function all intrinsic.
+
 data division.
 working-storage section.
 01  isvalid               usage   signed-int.
@@ -42,7 +48,7 @@ procedure division using ny-year ny-lineardate ny-bool.
 0100-main.
     move 'N' to ny-bool.
     if (-27256 <= ny-year) and (ny-year <= 30826)
-        call 'fielded_to_linear' using ny-year month dom ny-lineardate
+        move fielded_to_linear(ny-year, month, dom) to ny-lineardate
         move 'Y' to ny-bool
     end-if.
     goback.
@@ -58,6 +64,12 @@ end program newyear.
 *>*****************************************************************
 identification division.
 program-id. yearend.
+
+environment division.
+configuration section.
+repository.
+    function fielded_to_linear
+    function all intrinsic.
 
 data division.
 working-storage section.
@@ -90,7 +102,7 @@ procedure division using ye-year ye-lineardate ye-bool.
 0100-main.
     move 'N' to ye-bool.
     if (-27256 <= ye-year) and (ye-year <= 30826)
-        call 'fielded_to_linear' using ye-year month dom ye-lineardate
+        move fielded_to_linear(ye-year, month, dom) to ye-lineardate
         move 'Y' to ye-bool
     end-if.
     goback.
