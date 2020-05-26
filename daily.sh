@@ -5,4 +5,4 @@ do
     (cd $i;./daily.sh)
 done
 
-#docker push $REP/gnucobol
+docker push $REP/gnucobol
