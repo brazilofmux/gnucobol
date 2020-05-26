@@ -7,11 +7,8 @@ RUN apt-get update -y \
  && rm -rf /var/lib/apt/lists/* \
  && wget 'https://ci.appveyor.com/api/projects/GitMensch/gnucobol-3-x/artifacts/gnucobol-3.1-dev.tar.gz?job=Image:%20Ubuntu1804' -O gnucobol-3.1-dev.tar.gz \
  && tar zxf gnucobol-3.1-dev.tar.gz \
- && rm gnucobol-3.1-dev.tar.gz
-
-WORKDIR /opt/gnucobol-3.1-dev
-RUN ./configure \
- && make \
- && make install \
+ && rm gnucobol-3.1-dev.tar.gz \
+ && (cd gnucobol-3.1-dev;./configure;make;make install) \
+ && rm -rf gnucobol-3.1-dev \
  && ldconfig \
  && cobc --version

@@ -7,11 +7,8 @@ RUN apt-get update -y \
  && rm -rf /var/lib/apt/lists/* \
  && wget 'https://sourceforge.net/projects/open-cobol/files/gnucobol/3.0/gnucobol-3.0-rc1.tar.gz/download' -O gnucobol-3.0-rc1.tar.gz \
  && tar zxf gnucobol-3.0-rc1.tar.gz \
- && rm gnucobol-3.0-rc1.tar.gz
-
-WORKDIR /opt/gnucobol-3.0-rc1
-RUN ./configure \
- && make \
- && make install \
+ && rm gnucobol-3.0-rc1.tar.gz \
+ && (cd gnucobol-3.0-rc1;./configure;make;make install) \
+ && rm -rf gnucobol-3.0-rc1 \
  && ldconfig \
  && cobc --version
