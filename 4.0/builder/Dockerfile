@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
 WORKDIR /opt
-COPY gnucobol.patch .
+COPY gnucobol-2.patch .
 RUN apt-get update -y \
  && apt-get install libdb-dev libncurses5-dev libgmp-dev libxml2-dev libcjson-dev -y \
  && apt-get install wget gcc gettext make patch makepatch -y \
@@ -11,6 +11,6 @@ RUN apt-get update -y \
  && rm gnucobol-4.0-early-dev.tar.gz \
  && (cd gnucobol-4.0-early-dev;patch -p1 < /opt/gnucobol-2.patch;./configure --with-indexed=db --with-json=cjson;make -j12;make install) \
  && rm -rf gnucobol-4.0-early-dev \
- && rm /opt/gnucobol.patch \
+ && rm /opt/gnucobol-2.patch \
  && ldconfig \
  && cobc --version
