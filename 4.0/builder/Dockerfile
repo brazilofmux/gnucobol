@@ -2,7 +2,7 @@ FROM debian:stable-slim
 
 WORKDIR /opt
 RUN apt-get update -y \
- && apt-get install libdb-dev libncurses-dev libgmp-dev libxml2-dev libcjson-dev -y \
+ && apt-get install libdb-dev libncurses-dev libncursesw6 libgmp-dev libxml2-dev libcjson-dev -y \
  && apt-get install wget gcc gettext make -y \
  && rm -rf /var/lib/apt/lists/* \
  && wget 'https://ci.appveyor.com/api/projects/GitMensch/gnucobol-trunk/artifacts/gnucobol-4.0-early-dev.tar.gz?job=Image:%20Ubuntu1804' -O gnucobol-4.0-early-dev.tar.gz \
