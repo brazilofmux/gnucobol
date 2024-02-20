@@ -1,9 +1,8 @@
-FROM debian:stable-slim
+FROM alpine
 
 COPY --from=gnucobol:3.0-builder /usr/local/lib/ /usr/local/lib/
 COPY --from=gnucobol:3.0-builder /usr/local/bin/cobcrun /usr/local/bin/cobcrun
 
-RUN apt-get update -y \
- && apt-get install libdb5.3 libncursesw6 libgmp10 -y \
- && rm -rf /var/lib/apt/lists/* \
- && ldconfig
+RUN apk add --update-cache db ncurses gmp \
+ && rm -rf /var/cache/apk/* \
+ && ldconfig /
