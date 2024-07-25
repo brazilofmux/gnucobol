@@ -3,7 +3,7 @@ FROM alpine
 WORKDIR /opt
 COPY gnucobol-4.0.tar.gz .
 RUN apk add --update-cache db-dev ncurses-dev gmp-dev libxml2-dev cjson-dev \
- && apk add --update-cache wget gcc libc-dev gettext make \
+ && apk add --update-cache wget g++ gcc libc-dev gettext make \
  && rm -rf /var/cache/apk/* \
 # && wget 'https://ci.appveyor.com/api/projects/GitMensch/gnucobol-trunk/artifacts/gnucobol-4.0.tar.gz?job=Image:%20Ubuntu1804' -O gnucobol-4.0.tar.gz \
  && tar zxf gnucobol-4.0.tar.gz \
