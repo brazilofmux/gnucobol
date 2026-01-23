@@ -1,0 +1,13 @@
+--- a/libcob/common.c
++++ b/libcob/common.c
+@@ -2650,8 +2650,8 @@ cob_setup_env (const char *progname)
+ 		if (p) {
+ 			*p = 0;
+ 			p = strrchr (binpath, SLASH_CHAR);
+-			if (memcmp (p+1, "bin", 3) == 0
+-			 || memcmp (p+1, "lib", 3) == 0) {
++			if (p && (memcmp (p+1, "bin", 3) == 0
++			 || memcmp (p+1, "lib", 3) == 0)) {
+ 				if (memcmp (p+4, "64", 2) == 0)
+ 					strcpy (exec64,"64");
+ 				/* more checks, mostly for Win32 distributions */
