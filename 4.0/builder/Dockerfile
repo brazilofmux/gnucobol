@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM alpine
 
 WORKDIR /opt
 COPY gnucobol-4.0.tar.gz .
