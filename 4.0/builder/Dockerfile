@@ -8,7 +8,7 @@ RUN apk add --update-cache db-dev ncurses-dev gmp-dev libxml2-dev cjson-dev \
 # && wget 'https://ci.appveyor.com/api/projects/GitMensch/gnucobol-trunk/artifacts/gnucobol-4.0.tar.gz?job=Image:%20Ubuntu1804' -O gnucobol-4.0.tar.gz \
  && tar zxf gnucobol-4.0-early-dev.tar.gz \
  && rm gnucobol-4.0-early-dev.tar.gz \
- && (cd gnucobol-4.0-early-dev;./configure --with-indexed=db --with-json=cjson;make -j$(nproc);make install) \
+ && (cd gnucobol-4.0-early-dev;./configure CFLAGS="-O2 -Wno-error -Wno-incompatible-pointer-types" --with-indexed=db --with-json=cjson;make -j$(nproc);make install) \
  && rm -rf gnucobol-4.0-early-dev \
  && ldconfig / \
  && cobc --version
