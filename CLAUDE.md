@@ -15,8 +15,6 @@ gnucobol/
 │   ├── hello/               # Test program container
 │   ├── runtime/             # Runtime container
 │   └── daily.sh             # Version build script
-├── csv/                      # CSV utilities for COBOL (C + COBOL)
-├── dates/                    # Date utilities for COBOL (C + COBOL)
 └── daily.sh                  # Main build orchestration script
 ```
 
@@ -36,39 +34,13 @@ Build individual container:
 cd 4.0/builder && podman build -t gnucobol:4.0-builder .
 ```
 
-### Utility Libraries
-
-Build CSV utilities:
-```bash
-cd csv && make
-```
-
-Build date utilities:
-```bash
-cd dates && make
-```
-
-Clean build artifacts:
-```bash
-make clean      # Remove .o files
-make realclean  # Remove .o and .so files
-```
+The root `daily.sh` and `update.sh` scripts are primarily reference automation for release/update flow. Prefer editing the versioned Dockerfiles directly when making repository changes.
 
 ## COBOL Compilation Commands
 
 Compile COBOL to executable:
 ```bash
 cobc -x program.cob
-```
-
-Compile COBOL to shared library:
-```bash
-cobc -b -O3 -o OUTPUT $(OBJECTS)
-```
-
-Compile COBOL source to object file (free format):
-```bash
-cobc -free -O3 -c source.cbl -o source.o
 ```
 
 ## GnuCOBOL 4.0 Bug Fix
@@ -109,9 +81,3 @@ if (p && (memcmp (p+1, "bin", 3) == 0
 ### GnuCOBOL Compilation Model
 
 GnuCOBOL uses source-to-source translation: COBOL → C → native binary via the system C compiler.
-
-### Utility Libraries
-
-Both `csv/` and `dates/` produce shared COBOL libraries (.so) from mixed C and COBOL sources. Pattern rules:
-- `.cbl` files compiled with `cobc -free -O3 -c`
-- `.c` files compiled with `gcc -std=c11 -O3 -fPIC -c`
