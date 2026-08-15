@@ -10,6 +10,7 @@ This repository wraps multiple GnuCOBOL releases as container builds.
 - `daily.sh` and `update.sh`: reference scripts that document the release/update flow more than day-to-day development.
 
 ## Build, Test, and Development Commands
+
 - `cd 4.0 && ./daily.sh`: build `gnucobol:4.0-builder`, `gnucobol:4.0-runtime`, and `gnucobol:4.0-hello` with `podman`.
 - `cd 4.0/builder && podman build -t gnucobol:4.0-builder .`: rebuild one image while iterating on a Dockerfile.
 - `cd 4.0/hello && podman build -t gnucobol:4.0-hello .`: rebuild the smoke-test image after editing `test.cob`.
