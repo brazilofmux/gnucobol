@@ -1,34 +1,43 @@
 FROM alpine:3.24.2
 
-# GnuCOBOL 4.0-early-dev, trunk at SVN r5725 (2026-10-05), the trunk head when
-# this was made. Vendored as a `git archive` of the OCamlPro GitHub mirror's
-# commit 72ab9a75187e059fda11386a99188e5491defd3a (r5725, "Various WIN32
-# fixes") -- pristine source, fetched once rather than from SourceForge at
-# build time. ../../4.0 is the older oracle (r5627, packaged 2025-12-08) and
-# is left as it is, so the tests that were measured against it still can be.
+# GnuCOBOL 4.0-early-dev, from trunk at the SVN revision pinned in the ARGs
+# below. ../../update.sh moves the pin: it exports a revision, vendors it as
+# the tarball named here, and rewrites these ARG lines and the pinned tags in
+# ../runtime and ../hello. Nothing else in this file names a revision.
 #
-# Built from the repository rather than a `make dist` tarball (dist wants the
-# PDF manual, i.e. TeX), so the tree is bootstrapped here.
+# Built from the repository with bootstrap, not a `make dist` tarball: dist
+# wants the PDF manual, i.e. a TeX installation, only to package source we
+# already have.
 #
-# Build-environment workarounds, as for 3.3: -Wno-incompatible-pointer-types
-# (libcob/mlio.c's libxml2 callbacks under GCC >= 14) and AWK=gawk
-# (doc/cobcinfo.sh's regex, which BusyBox awk rejects).
+# Build-environment workarounds, not changes to GnuCOBOL's code:
+#  -Wno-incompatible-pointer-types: libcob/mlio.c's libxml2 error callbacks are
+#     typed for the pre-2.12 API, which GCC >= 14 refuses by default.
+#  AWK=gawk: doc/cobcinfo.sh's regex `\$@{envvar:-?default@}` is rejected by
+#     BusyBox awk.
 #
-# ONE LOCAL PATCH to GnuCOBOL's code, the same one ../../4.0 carries:
-# libcob/common.c's exec-path detection does `p = strrchr (binpath, ...)` and
-# then `memcmp (p+1, "bin", 3)` with no check that p is not NULL. Still present
-# at r5725. Applied by matching the text, not a line number, and the build
-# fails if either line is not found exactly once -- a moved line must not turn
-# the guard into a silent no-op.
+# ONE LOCAL PATCH to GnuCOBOL's code: libcob/common.c's exec-path detection
+# does `p = strrchr (binpath, ...)` and then `memcmp (p+1, "bin", 3)` with no
+# check that p is not NULL. Applied by matching the text, never a line number;
+# the build fails unless each line is found exactly once. If upstream fixes it,
+# the anchor vanishes and this build stops -- update.sh checks for that first.
+
+ARG GNUCOBOL_VERSION=4.0-early-dev
+ARG GNUCOBOL_SVN=svn://svn.code.sf.net/p/gnucobol/code/trunk
+ARG GNUCOBOL_REV=5725
+ARG GNUCOBOL_REV_DATE=2026-10-05
+ARG GNUCOBOL_TARBALL=gnucobol-4.0-early-dev-r5725.tar.gz
+ARG GNUCOBOL_SHA256=62cdaefa530f317a5c9c1a503b219f35d5cfcf42baae834d16462e9ce9ba4a20
+ARG GNUCOBOL_ORIGIN="git archive of https://github.com/OCamlPro/gnucobol commit 72ab9a75187e059fda11386a99188e5491defd3a, which is r5725"
 
 WORKDIR /opt
-COPY gnucobol-4.0-early-dev-r5725.tar.gz .
+COPY ${GNUCOBOL_TARBALL} .
 RUN apk add --update-cache db-dev ncurses-dev gmp-dev libxml2-dev cjson-dev \
  && apk add --update-cache g++ gcc libc-dev gettext gettext-dev make \
         autoconf automake libtool bison flex gawk texinfo help2man perl \
  && rm -rf /var/cache/apk/* \
- && mkdir gnucobol && tar xzf gnucobol-4.0-early-dev-r5725.tar.gz -C gnucobol \
- && rm gnucobol-4.0-early-dev-r5725.tar.gz \
+ && echo "${GNUCOBOL_SHA256}  ${GNUCOBOL_TARBALL}" | sha256sum -c - \
+ && mkdir gnucobol && tar xzf "${GNUCOBOL_TARBALL}" -C gnucobol \
+ && rm "${GNUCOBOL_TARBALL}" \
  && f=gnucobol/libcob/common.c \
  && test "$(grep -c 'if (memcmp (p+1, "bin", 3) == 0$' $f)" = 1 \
  && test "$(grep -c '|| memcmp (p+1, "lib", 3) == 0) {$' $f)" = 1 \
@@ -45,14 +54,14 @@ RUN apk add --update-cache db-dev ncurses-dev gmp-dev libxml2-dev cjson-dev \
  && ldconfig / \
  && mkdir -p /usr/local/share/gnucobol \
  && printf '%s\n' \
-      'GnuCOBOL 4.0-early-dev' \
-      'source: svn://svn.code.sf.net/p/gnucobol/code/trunk r5725 (2026-10-05)' \
-      'git:    https://github.com/OCamlPro/gnucobol 72ab9a75187e059fda11386a99188e5491defd3a' \
-      'local patches: libcob/common.c NULL guard on p before memcmp (p+1, "bin"/"lib")' \
+      "GnuCOBOL ${GNUCOBOL_VERSION}" \
+      "source: ${GNUCOBOL_SVN} r${GNUCOBOL_REV} (${GNUCOBOL_REV_DATE})" \
+      "from:   ${GNUCOBOL_ORIGIN}" \
+      "sha256: ${GNUCOBOL_SHA256}" \
+      "local patches: libcob/common.c NULL guard on p before memcmp (p+1, \"bin\"/\"lib\")" \
       > /usr/local/share/gnucobol/SOURCE \
  && cobc --version
 
-LABEL org.opencontainers.image.title="gnucobol 4.0-early-dev (trunk) builder" \
-      org.opencontainers.image.version="4.0-early-dev r5725" \
-      org.opencontainers.image.revision="72ab9a75187e059fda11386a99188e5491defd3a" \
-      org.opencontainers.image.source="https://github.com/OCamlPro/gnucobol/tree/master"
+LABEL org.opencontainers.image.title="gnucobol ${GNUCOBOL_VERSION} builder" \
+      org.opencontainers.image.version="${GNUCOBOL_VERSION} r${GNUCOBOL_REV}" \
+      org.opencontainers.image.source="${GNUCOBOL_SVN}"

@@ -19,7 +19,7 @@ gnucobol/
 │   └── hello/     test.cob, compiled in builder and run on runtime
 ├── gcobol/15, gcobol/17   gcobol oracles (17 is amd64-only; see its Dockerfile)
 ├── daily.sh   local build of any line, as the fleet job does it
-└── update.sh  OLDER FLOW, superseded -- see below
+└── update.sh  moves a development line's pin (3.3, 4.0) -- see below
 ```
 
 The directory name is the line's **moving** tag. Each line's **pinned** tag is written in its `runtime/Dockerfile` (`COPY --from=gnucobol:<pinned>-builder`) and `hello/Dockerfile`; `daily.sh` and the fleet job both read it from there. A pinned tag names exactly one build -- a GNU release padded to three components, or a development line's SVN revision -- and the fleet job never rebuilds a pin that is already in ECR. To move a line forward, change its pin.
@@ -53,9 +53,11 @@ podman run --rm gnucobol:4.0-hello      # Hello, World!
 
 Every image is `FROM alpine:3.24.2` -- pinned to the version the published images were built on, so a rebuild is the same build.
 
-## update.sh is superseded
+## Moving a pin: update.sh
 
-`update.sh` refreshed the 4.0 tarball from `~/gnucobol-svn`, baking the NULL patch into a `make distcheck` tarball. The current layout vendors pristine source and applies the patch visibly in the Dockerfile, so its output is no longer what `4.0/builder` uses. Don't run it as it stands.
+`./update.sh --check` compares each development line's pin with its branch and changes nothing. `./update.sh 4.0` (or `./update.sh 3.3 5731`) moves that line: it `svn export`s the revision (normalised to the branch's last change at or before it), checks `configure.ac` declares the line's version, checks the NULL-guard anchors when the builder carries that patch, gives every file the revision's commit time (as `git archive` does; mixed svn-export mtimes make the build regenerate `po/` and fail a gettext version check), tars it, and rewrites the builder's ARG lines and the pinned tags in `runtime/` and `hello/`. The result is staged, not committed; build it with `./daily.sh <line>` before committing. It refuses 3.1 and 3.2 (GNU releases) and a line with uncommitted changes.
+
+Not every revision builds: branches/gnucobol-3.x r5724 calls libxml2 2.14's `xmlCtxtGetOptions` behind a `>= 2.12` guard, fixed in r5726.
 
 ## GnuCOBOL Compilation Model
 
