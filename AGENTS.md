@@ -3,15 +3,15 @@
 ## Project Structure & Module Organization
 This repository wraps multiple GnuCOBOL releases as container builds.
 
-- `3.0/`, `3.1/`, `3.2/`, `4.0/`: versioned container stacks with `builder/`, `runtime/`, `hello/`, and a local `daily.sh`.
+- `3.1/`, `3.2/`, `3.3/`, `4.0/`: one container stack per GnuCOBOL line, each with `builder/`, `runtime/`, `hello/`. The directory name is the line's tag; its pinned tag is in `runtime/Dockerfile`.
 - `*/builder/Dockerfile`: builds the compiler image from the packaged source tarball.
 - `*/runtime/Dockerfile`: trims the runtime dependencies for compiled COBOL programs.
 - `*/hello/test.cob`: minimal smoke-test program used by the hello image.
-- `daily.sh` and `update.sh`: reference scripts that document the release/update flow more than day-to-day development.
+- `daily.sh`: builds any line locally, the way the fleet job in `~/builder` does. `update.sh` is superseded (see `CLAUDE.md`).
 
 ## Build, Test, and Development Commands
 
-- `cd 4.0 && ./daily.sh`: build `gnucobol:4.0-builder`, `gnucobol:4.0-runtime`, and `gnucobol:4.0-hello` with `podman`.
+- `./daily.sh 4.0`: build `gnucobol:4.0-builder`, `-runtime` and `-hello` (and the pinned `4.0-r5725-*`); `./daily.sh` alone builds every line.
 - `cd 4.0/builder && podman build -t gnucobol:4.0-builder .`: rebuild one image while iterating on a Dockerfile.
 - `cd 4.0/hello && podman build -t gnucobol:4.0-hello .`: rebuild the smoke-test image after editing `test.cob`.
 - `cd 4.0/runtime && podman build -t gnucobol:4.0-runtime .`: validate runtime-layer changes in isolation.
@@ -27,7 +27,7 @@ Follow the style already in the tree.
 ## Testing Guidelines
 There is no separate test framework in this repository; validation is build-based.
 
-- Rebuild the affected container stack with `./daily.sh` after changing Dockerfiles or version scripts.
+- Rebuild the affected line with `./daily.sh <line>` after changing its Dockerfiles.
 - Rebuild the specific `hello` image if you change a sample program or compiler flags.
 - Treat a clean `podman build` and a working hello image as the minimum acceptance bar.
 

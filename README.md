@@ -1,8 +1,17 @@
 # gnucobol
 
 Docker/Podman build recipes for [GnuCOBOL](https://gnucobol.sourceforge.io/),
-packaged as minimal Alpine-based container images. Separate versioned
-directories exist for GnuCOBOL **3.0**, **3.1**, **3.2**, and **4.0**.
+packaged as minimal Alpine-based container images, published as
+`hurriedreformist/gnucobol` on Docker Hub. Four lines:
+
+| Directory | GnuCOBOL | Tags |
+| --- | --- | --- |
+| `3.1/` | release 3.1.2 | `3.1-*`, pinned `3.1.2-*` |
+| `3.2/` | release 3.2 | `3.2-*`, pinned `3.2.0-*` |
+| `3.3/` | 3.3-dev, branches/gnucobol-3.x r5729 | `3.3-*`, pinned `3.3-r5729-*` |
+| `4.0/` | 4.0-early-dev, trunk r5725 | `4.0-*`, pinned `4.0-r5725-*` |
+
+The short tag follows its line; the pinned tag never changes what it names.
 
 Each version produces three images:
 
@@ -14,16 +23,16 @@ Each version produces three images:
 
 ## Building the images
 
-Either `podman` or `docker` works. From the repo root, build all images for
-one version:
+Either `podman` or `docker` works. From the repo root:
 
 ```sh
-cd 4.0 && ./daily.sh
+./daily.sh          # every line
+./daily.sh 4.0      # one line
 ```
 
-That script builds `builder`, `runtime`, and `hello` in order (each depends
-on the previous). The top-level `daily.sh` drives the same for every
-supported version.
+It builds `builder`, `runtime`, and `hello` in order (each depends on the
+previous), under both the line's tag and its pinned tag. The published images
+are built by the fleet in `~/builder`; this is for building locally.
 
 To build a single image directly:
 
@@ -80,8 +89,9 @@ CMD ["./program"]
 
 ## Notes
 
-- The 4.0 builder carries a small `sed` patch for a NULL-pointer bug in
-  `libcob/common.c` (`cob_setup_env`); see `CLAUDE.md` for details.
-- GnuCOBOL 4.0 is tracked from upstream development snapshots and the
-  tarball in `4.0/builder/` is updated periodically.
+- The 4.0 builder fixes a NULL-pointer dereference in `libcob/common.c`,
+  still present in trunk; the other builders carry only build fixes for
+  today's toolchain. `CLAUDE.md` lists them all.
+- Each image records exactly what it was built from in
+  `/usr/local/share/gnucobol/SOURCE`.
 - Released under the MIT License (see `LICENSE`).

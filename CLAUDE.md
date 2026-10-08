@@ -4,80 +4,59 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Docker containerization wrapper for GnuCOBOL (GNU COBOL compiler). It maintains build and deployment configurations for multiple GnuCOBOL versions (3.0, 3.1, 3.2, 4.0) as Docker containers, with actual GnuCOBOL source distributed as tarballs.
+Container build recipes for GnuCOBOL, and for gcobol (GCC's COBOL front end), on Alpine. The GnuCOBOL images serve as **oracles** for `~/slow-32`'s COBOL compiler, and are published to Docker Hub as `hurriedreformist/gnucobol`. The fleet in `~/builder` builds them (`jobs/gnucobol.sh`, `jobs/gcobol.sh`); this repository holds what they build from.
 
 ## Repository Structure
 
 ```
 gnucobol/
-├── 3.0/, 3.1/, 3.2/, 4.0/  # Version-specific directories
-│   ├── builder/             # Docker build env with Dockerfile and tarball
-│   ├── hello/               # Test program container
-│   ├── runtime/             # Runtime container
-│   └── daily.sh             # Version build script
-└── daily.sh                  # Main build orchestration script
+├── 3.1/   GNU release 3.1.2             -> gnucobol:3.1.2-*      and gnucobol:3.1-*
+├── 3.2/   GNU release 3.2               -> gnucobol:3.2.0-*      and gnucobol:3.2-*
+├── 3.3/   branches/gnucobol-3.x r5729   -> gnucobol:3.3-r5729-*  and gnucobol:3.3-*
+├── 4.0/   trunk r5725                   -> gnucobol:4.0-r5725-*  and gnucobol:4.0-*
+│   ├── builder/   Dockerfile + the vendored source tarball
+│   ├── runtime/   libcob, cobcrun, and the runtime libraries
+│   └── hello/     test.cob, compiled in builder and run on runtime
+├── gcobol/15, gcobol/17   gcobol oracles (17 is amd64-only; see its Dockerfile)
+├── daily.sh   local build of any line, as the fleet job does it
+└── update.sh  OLDER FLOW, superseded -- see below
 ```
+
+The directory name is the line's **moving** tag. Each line's **pinned** tag is written in its `runtime/Dockerfile` (`COPY --from=gnucobol:<pinned>-builder`) and `hello/Dockerfile`; `daily.sh` and the fleet job both read it from there. A pinned tag names exactly one build -- a GNU release padded to three components, or a development line's SVN revision -- and the fleet job never rebuilds a pin that is already in ECR. To move a line forward, change its pin.
+
+## Provenance
+
+Every builder records what it was built from in `/usr/local/share/gnucobol/SOURCE` and in OCI labels.
+
+- **3.1, 3.2**: the GNU release tarballs, byte-identical to ftp.gnu.org's and signed by Simon Sobisch (key B9459D0CA8A740B323235CDF13E96B53C005604E, in the GNU keyring; verified 2026-10-08). Each Dockerfile checks the tarball's sha256.
+- **3.3, 4.0**: a `git archive` of the OCamlPro GitHub mirror's commit for the pinned SVN revision (r5729 = 91d1bd5ac4, r5725 = 72ab9a7518, matched against `svn log`). Pristine source, built with bootstrap, because `make dist` requires a TeX installation for the PDF manual.
+
+## Changes made to GnuCOBOL's source
+
+Only one changes behaviour, and only on 4.0 (trunk): `libcob/common.c`'s exec-path detection does `p = strrchr (binpath, ...)` and then `memcmp (p+1, "bin", 3)` with no check that `p` is not NULL. Still present at r5725. Fixed by making it `if (p && (memcmp (p+1, "bin", 3) == 0 ... ))`. 3.x has no such code.
+
+The rest are build fixes for today's toolchain, not behaviour:
+
+- `#include <libxml/parser.h>` (3.1, 3.2): libxml2 >= 2.12 stopped pulling it in through its other headers.
+- `-Wno-incompatible-pointer-types` (all): `libcob/mlio.c`'s libxml2 error callbacks are typed for the pre-2.12 API, which GCC >= 14 refuses by default.
+- `AWK=gawk` (3.3, 4.0): `doc/cobcinfo.sh`'s regex `\$@{envvar:-?default@}` is rejected by BusyBox awk.
+
+**Every patch matches text, never a line number, and the build fails unless its anchor is found exactly once.** The earlier Dockerfiles patched by line number; 3.1's copied 3.2's line 138, which in 3.1.2 is outside the libxml block. A moved line must stop the build, not turn a fix into a silent no-op.
 
 ## Build Commands
 
-### Docker Images
-
-Build all containers for a version (uses podman):
 ```bash
-cd 4.0 && ./daily.sh
+./daily.sh            # all four lines, locally (podman or docker)
+./daily.sh 4.0        # one line
+podman run --rm gnucobol:4.0-hello      # Hello, World!
 ```
 
-This builds three images: `gnucobol:4.0-builder`, `gnucobol:4.0-runtime`, `gnucobol:4.0-hello`
+Every image is `FROM alpine:3.24.2` -- pinned to the version the published images were built on, so a rebuild is the same build.
 
-Build individual container:
-```bash
-cd 4.0/builder && podman build -t gnucobol:4.0-builder .
-```
+## update.sh is superseded
 
-The root `daily.sh` and `update.sh` scripts are primarily reference automation for release/update flow. Prefer editing the versioned Dockerfiles directly when making repository changes.
+`update.sh` refreshed the 4.0 tarball from `~/gnucobol-svn`, baking the NULL patch into a `make distcheck` tarball. The current layout vendors pristine source and applies the patch visibly in the Dockerfile, so its output is no longer what `4.0/builder` uses. Don't run it as it stands.
 
-## COBOL Compilation Commands
+## GnuCOBOL Compilation Model
 
-Compile COBOL to executable:
-```bash
-cobc -x program.cob
-```
-
-## GnuCOBOL 4.0 Bug Fix
-
-The Dockerfiles are pinned to `alpine:3.20` for stability.
-
-The builder Dockerfile includes a patch for a NULL pointer dereference bug in `libcob/common.c` (function `cob_setup_env`). At line 2652, `strrchr()` can return NULL if the path has no slash character, but line 2653 dereferences `p+1` without checking for NULL. The sed commands add the missing NULL check:
-
-```c
-// Before (buggy):
-p = strrchr (binpath, SLASH_CHAR);
-if (memcmp (p+1, "bin", 3) == 0
- || memcmp (p+1, "lib", 3) == 0) {
-
-// After (fixed):
-p = strrchr (binpath, SLASH_CHAR);
-if (p && (memcmp (p+1, "bin", 3) == 0
- || memcmp (p+1, "lib", 3) == 0)) {
-```
-
-## Architecture
-
-### Docker Container Hierarchy
-
-1. **builder** - Full GnuCOBOL 4.0 build environment on Alpine
-   - Contains gcc, make, all development headers
-   - Builds and installs GnuCOBOL from tarball
-   - Configure: `--with-indexed=db --with-json=cjson`
-
-2. **runtime** - Minimal runtime environment
-   - Copies only `/usr/local/lib/` and `cobcrun` from builder
-   - Runtime dependencies: db, ncurses, gmp, libxml2, cjson, libstdc++
-
-3. **hello** - Multi-stage test container
-   - Uses builder to compile test.cob
-   - Uses runtime for final image
-
-### GnuCOBOL Compilation Model
-
-GnuCOBOL uses source-to-source translation: COBOL → C → native binary via the system C compiler.
+GnuCOBOL translates COBOL to C and compiles that with the system C compiler, which is why the builder image carries gcc.
