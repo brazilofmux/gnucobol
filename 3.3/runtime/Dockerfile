@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.24.2
 
 COPY --from=gnucobol:3.3-r5729-builder /usr/local/lib/ /usr/local/lib/
 COPY --from=gnucobol:3.3-r5729-builder /usr/local/share/gnucobol/ /usr/local/share/gnucobol/

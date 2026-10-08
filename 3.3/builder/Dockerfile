@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.24.2
 
 # GnuCOBOL 3.3-dev, branches/gnucobol-3.x at SVN r5729 (2026-10-06), the
 # branch head when this was made. Vendored as a `git archive` of the OCamlPro
