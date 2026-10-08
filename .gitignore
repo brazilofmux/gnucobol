@@ -1,3 +1,6 @@
 
 # mdfix -i backups
 *.bak
+
+# macOS Finder
+.DS_Store
